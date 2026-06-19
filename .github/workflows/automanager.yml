@@ -43,6 +43,18 @@ jobs:
       - name: Execute script
         run: python pages_delete.py
 
+      - name: Deploy data.json to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+          destination_dir: ./
+          keep_files: true
+          enable_jekyll: false
+          include:
+            - data.json
+
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
