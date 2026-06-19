@@ -471,8 +471,8 @@ def check_pending_pages():
         # 更新 pending 信息
         pending_pages[page.id] = [original_announced_score, record_timestamp, page.fullname]
 
-        # 分数回升检查：分数 >= -2 → 取消删除
-        if score >= -2:
+        # 分数回升检查：分数 > -2 → 取消删除
+        if score > -2:
             edit_post(
                 discuss_id,
                 deletion_post["id"],
