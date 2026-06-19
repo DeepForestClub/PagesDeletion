@@ -318,7 +318,7 @@ def find_staff_post(posts: list[dict]) -> dict:
     for post in posts:
         title = post["title"]
         user = post["created_by"].name
-        if "【职员帖】" in title and "删除宣告" in title and user in staff_unix_names:
+        if "职员帖" in title and "删除宣告" in title and user in staff_unix_names:
             return post
 
 
