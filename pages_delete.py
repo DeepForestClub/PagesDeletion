@@ -378,10 +378,10 @@ def check_original_pages():
 @Retry(ifRaise=True)
 def check_pending_pages():
     """
-    维护待删除页面状态（最终稳定版）：
-    - 以 pending_pages 为唯一真相源
+    维护待删除页面状态：
+    - pending_pages 为唯一真相源
     - 分数跨档才更新
-    - 倒计时最后 6 小时冻结（仅允许分数回升取消）
+    - 倒计时最后 6 小时标记为 frozen
     """
     pages = site.pages.search(
         category="-reserve",
@@ -391,7 +391,6 @@ def check_pending_pages():
     current_time = time.time()
 
     def score_bucket(score: int) -> int:
-        """返回分数对应的倒计时档位（小时）"""
         if score <= -4:
             return 24
         elif score <= -2:
@@ -458,7 +457,7 @@ def check_pending_pages():
 
         remaining_seconds = record_timestamp - current_time
 
-        # ---------- 冻结期内允许“分数回升” ----------
+        # ---------- 冻结期 ----------
         if remaining_seconds < 21600:  # 6 小时
             if score >= -2:
                 logger.info(
@@ -472,13 +471,26 @@ def check_pending_pages():
                 edit_tags(page_id, " ".join(tags).replace("待删除", ""))
                 pending_pages.pop(page_id, None)
                 continue
-            else:
-                logger.info(
-                    f"页面 {page.fullname} 处于冻结期（剩余 {int(remaining_seconds)}s），禁止刷新"
-                )
-                continue
 
-        # ---------- 正常分数回升（非冻结期） ----------
+            # 冻结期仍然记录，但标记为 frozen
+            logger.info(
+                f"页面 {page.fullname} 处于冻结期（剩余 {int(remaining_seconds)}s）"
+            )
+
+            pending_delete_pages.append({
+                "link": page.get_url(),
+                "title": page.title,
+                "score": score,
+                "release_score": announced_score,
+                "time": round(remaining_seconds / 3600, 1),
+                "discuss_link": f"https://{config['siteUnixName']}.wikidot.com/forum/t-{discuss_id}",
+                "post_id": deletion_post["id"],
+                "timestamp": record_timestamp,
+                "status": "frozen",
+            })
+            continue
+
+        # ---------- 正常分数回升 ----------
         if score > -2:
             edit_post(
                 discuss_id,
@@ -519,16 +531,16 @@ def check_pending_pages():
                 [page.fullname, announced_score, "normal"]
             )
         else:
-            remaining_hours = (record_timestamp - current_time) / 3600
             pending_delete_pages.append({
                 "link": page.get_url(),
                 "title": page.title,
                 "score": score,
                 "release_score": announced_score,
-                "time": round(remaining_hours, 1),
+                "time": round((record_timestamp - current_time) / 3600, 1),
                 "discuss_link": f"https://{config['siteUnixName']}.wikidot.com/forum/t-{discuss_id}",
                 "post_id": deletion_post["id"],
                 "timestamp": record_timestamp,
+                "status": "normal",
             })
 
 
