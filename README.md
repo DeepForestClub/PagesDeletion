@@ -4,3 +4,5 @@
 数据实时后台可见：
  - [Cloudflare Pages 镜像](https://dfcwiki.pages.dev/web/PagesDeletion)
  - [Github Pages 原站](https://deepforestclub.github.io/PagesDeletion)
+
+基于[WikidotpagesAutomanager](https://github.com/azureact/WikidotpagesAutomanager/)，适用于GPL协议，代码使用DeepSeek AI编写。
