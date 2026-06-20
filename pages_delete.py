@@ -583,7 +583,7 @@ def generate_announce():
                     "title": page.title,
                     "score": page.rating,
                     "time": (
-                        24 if release_score <= -10 else 72
+                        24 if release_score <= -4 else 48
                     ),
                     "context": page.source.wiki_text,
                     "page_type": [page_type],
