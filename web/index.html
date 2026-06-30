@@ -299,8 +299,8 @@
         });
         const copied = ref(false);
 
-        const PRIMARY_URL = 'https://raw.githubusercontent.com/DeepForestClub/PagesDeletion/master/data.json';
-        const FALLBACK_URL = 'https://deepforestclub.github.io/PagesDeletion/data.json';
+        const PRIMARY_URL = 'https://deepforestclub.github.io/PagesDeletion/data.json';
+        const FALLBACK_URL = 'https://raw.githubusercontent.com/DeepForestClub/PagesDeletion/refs/heads/gh-pages/data.json';
 
         function fetchWithTimeout(url, timeout = 8000) {
           const controller = new AbortController();
